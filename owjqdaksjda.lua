@@ -1,4 +1,4 @@
---V25
+--v4
 
 
 
@@ -2680,7 +2680,7 @@ local asv = game:GetService("Players").LocalPlayer.PlayerGui.Gear_Shop
 end
 })
 
-Dlg1:AddToggle("SZSUI",{
+Dlg1:AddToggle("DQUIS",{
 Title = "Daily Quest UI",
 Description = "Show Daily Quest UI",
 Default = false,
@@ -2708,7 +2708,7 @@ local asv = game:GetService("Players").LocalPlayer.PlayerGui.PetEquipSlots_UI
 end
 })
 
-Dlg1:AddToggle("SZSUI",{
+Dlg1:AddToggle("COSMUI",{
 Title = "Cosmetic Shop UI",
 Description = "Show Cosmetic Shop UI",
 Default = false,
