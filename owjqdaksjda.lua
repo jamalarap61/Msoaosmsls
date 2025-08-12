@@ -1,4 +1,5 @@
---oldV2
+--oldV3
+
 
 
 
@@ -2213,7 +2214,7 @@ end
 })
 
 local Shp5 = Tab5:AddSection("Egg Shop")
-Shp5:AddDropdown("SGSHP", {
+Shp5:AddDropdown("SGSHPDF", {
 Title = "Select: Egg Shop",
 Description = "Target Egg",
 Values = Data.EggList, 
