@@ -1,4 +1,4 @@
--- OLDV1
+--OLD V2
 
 
 
@@ -2073,7 +2073,6 @@ Shp1:AddDropdown("SZSHP", {
 Title = "Select: Zen Shop",
 Description = "Target Item",
 Values = Data.ZenShop, 
-Value = {},
 Multi = true, 
 AllowNull = true, 
 Callback = function(Value)
@@ -2125,7 +2124,6 @@ Shp2:AddDropdown("SSSHP", {
 Title = "Select: Seed Shop",
 Description = "Target Seed",
 Values = Data.SeedList, 
-Value = {},
 Multi = true, 
 AllowNull = true, 
 Callback = function(Value)
@@ -2167,8 +2165,55 @@ end
 end
 })
 
-local Shp4 = Tab5:AddSection("Gear Shop")
-Shp4:AddDropdown("SGSHP", {
+
+local Shp3 = Tab5:AddSection("Gear Shop")
+Shp3:AddDropdown("SGSHPPP", {
+Title = "Select: Gear Shop",
+Description = "Target Gear",
+Values = Data.GearList, 
+Multi = true, 
+AllowNull = true, 
+Callback = function(Value)
+if type(Value) == "table" then
+            Data.SelectedGear = Value
+        else
+            Data.SelectedGear = {Value}
+        end
+end
+})
+
+local GearAuto = false
+Shp3:AddToggle("ABGSGAAA",{
+Title = "Auto Buy Gear",
+Description = "Selected Gear",
+Default = false,
+Callback = function(Value)
+GearAuto = Value
+if Value then
+    if not Data.SelectedGear or #Data.SelectedGear == 0 then
+        NotifyHub("Please Select Gear to Auto Buy")
+        return
+    end
+    task.spawn(function()
+    while GearAuto do
+    for i = 1,10 do
+    for _, item in pairs(Data.SelectedGear) do
+    BuyGear(item)
+    task.wait() 
+    end
+    task.wait() 
+    end
+    task.wait(math.random(3, 5))
+    end
+    end) 
+else
+    GearAuto = false
+end
+end
+})
+
+local Shp4 = Tab5:AddSection("Egg Shop")
+Shp4:AddDropdown("SGSHPPJK", {
 Title = "Select: Egg Shop",
 Description = "Target Egg",
 Values = Data.EggList, 
@@ -2184,7 +2229,7 @@ end
 })
 
 local EggAuto = false
-Shp4:AddToggle("ABEGGSG",{
+Shp4:AddToggle("ABEGGSGZ",{
 Title = "Auto Buy Egg",
 Description = "Selected Egg",
 Default = false,
