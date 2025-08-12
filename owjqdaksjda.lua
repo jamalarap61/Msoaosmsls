@@ -2165,6 +2165,51 @@ end
 end
 })
 
+local Shp4 = Tab5:AddSection("Gear Shop")
+Shp4:AddDropdown("SGSHP", {
+Title = "Select: Egg Shop",
+Description = "Target Egg",
+Values = Data.EggList, 
+Multi = true, 
+AllowNull = true, 
+Callback = function(Value)
+if type(Value) == "table" then
+            Data.SelectedEgg = Value
+        else
+            Data.SelectedEgg = {Value}
+        end
+end
+})
+
+local EggAuto = false
+Shp4:AddToggle("ABEGGSG",{
+Title = "Auto Buy Egg",
+Description = "Selected Egg",
+Default = false,
+Callback = function(Value)
+    EggAuto = Value
+if Value then
+    if not Data.SelectedEgg or #Data.SelectedEgg == 0 then
+        NotifyHub("Please Select Egg to Auto Buy")
+        return
+    end
+    task.spawn(function()
+            while EggAuto do
+            for jg = 1, 5 do
+               for _, v in pairs(Data.SelectedEgg) do
+               Data.GameEvents.BuyPetEgg:FireServer(v)
+               end
+               task.wait()
+               end
+               task.wait(math.random(1, 5)) 
+               end
+        end)
+    else 
+    EggAuto = false
+    end
+end
+end
+})
 
 
 SaveManager:SetLibrary(Library)
