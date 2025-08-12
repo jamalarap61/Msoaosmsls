@@ -1,4 +1,3 @@
---V2
 
 
 
@@ -1641,7 +1640,7 @@ Callback = function(Value)
 AutoFeedEnabled = Value
         if AutoFeedEnabled then
         if not DelayFeed then
-        NotifuHub("Please Set Delay Auto Feed") 
+        NotifyHub("Please Set Delay Auto Feed") 
         return
         end
             task.spawn(function()
@@ -1762,7 +1761,7 @@ local function FindMatchingTool()
     return nil
 end
 
-Pet2:AddDropdown("SEGGH", {
+Pet2:AddDropdown("SHEGG", {
 Title = "Select: Egg",
 Description = "Target",
 Values = Data.EggList, 
@@ -2208,7 +2207,7 @@ Title = "Auto Buy Gear",
 Description = "Selected Gear",
 Default = false,
 Callback = function(Value)
-GearAuto = v
+GearAuto = Value
 if Value then
     if not Data.SelectedGear or #Data.SelectedGear == 0 then
         NotifyHub("Please Select Gear to Auto Buy")
@@ -2762,7 +2761,7 @@ end
 })
 
 local Tp6 = Tab8:AddSection("Teleport Egg NPC")
-T6:AddButton({
+Tp6:AddButton({
 Title = "Egg NPC Teleport", 
 Callback = function()
 Teleport(CFrame.new(-283.60, 3.00, 3.51))
@@ -2829,7 +2828,7 @@ AllowNull = true,
 Callback = function(Value)
  Data.SelectedPetMids = {}
 
-        local selectedNames = (typeof(option) == "table") and option or {option}
+        local selectedNames = (typeof(Value) == "table") and Value or {Value}
         local copy = {}
         for i, v in ipairs(Data.PetListDataMid) do
             copy[i] = { Name = v.Name, UUID = v.UUID, used = false }
@@ -3048,7 +3047,7 @@ end
 
 local Perf1 = Tab9:AddSection("Hide Noitification")
 
-Perf1:AddToggle("HDNTF",{/
+Perf1:AddToggle("HDNTF",{
 Title = "Hide Notification",
 Description = "All Notification",
 Default = false,
@@ -3068,7 +3067,7 @@ end
 })
 
 local Perf2 = Tab9:AddSection("Hide Backpack")
-Perf2:AddToggle("HDBPK",{/
+Perf2:AddToggle("HDBPK",{
 Title = "Hide Backpack",
 Description = "Item Backpack",
 Default = false,
@@ -3428,7 +3427,7 @@ if Value then
     NotifyHub("Please Set Place Version") 
     return
     end
-HoopPlace = v
+HoopPlace = Value
 task.spawn(function()
 while HoopPlace do
 local SerV = game:GetService("CoreGui").RobloxGui.SettingsClippingShield.SettingsShield.VersionContainer.PlaceVersionLabel
@@ -3490,11 +3489,11 @@ Title = "Auto Reconnect",
 Description = "When Disconnected",
 Default = true,
 Callback = function(Value)
-		if state then
-			EnableAutoRejoin()
-		else
-			DisableAutoRejoin()
-		end
+        if Value then
+            EnableAutoRejoin()
+        else
+            DisableAutoRejoin()
+        end
 end
 })
 
