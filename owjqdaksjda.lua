@@ -1,4 +1,4 @@
---oldV1
+--oldV2
 
 
 
@@ -2212,8 +2212,8 @@ end
 end
 })
 
-local Shp4 = Tab5:AddSection("Gear Shop")
-Shp4:AddDropdown("SGSHP", {
+local Shp5 = Tab5:AddSection("Egg Shop")
+Shp5:AddDropdown("SGSHP", {
 Title = "Select: Egg Shop",
 Description = "Target Egg",
 Values = Data.EggList, 
@@ -2229,7 +2229,7 @@ end
 })
 
 local EggAuto = false
-Shp4:AddToggle("ABEGGSG",{
+Shp5:AddToggle("ABEGGSG",{
 Title = "Auto Buy Egg",
 Description = "Selected Egg",
 Default = false,
