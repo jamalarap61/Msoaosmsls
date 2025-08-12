@@ -1,3 +1,5 @@
+-- V1
+
 
 
 
@@ -2614,7 +2616,7 @@ Description = "Show Zen Shop UI",
 Default = false,
 Callback = function(Value)
 local asv = game:GetService("Players").LocalPlayer.PlayerGui.EventShop_UI
-    if v then
+    if Value then
     asv.Enabled = true
     else
     asv.Enabled = false
@@ -2628,7 +2630,7 @@ Description = "Show Traveling Merchant UI",
 Default = false,
 Callback = function(Value)
 local asv = game:GetService("Players").LocalPlayer.PlayerGui.TravelingMerchantShop_UI
-    if v then
+    if Value then
     asv.Enabled = true
     else
     asv.Enabled = false
@@ -2642,7 +2644,7 @@ Description = "Show Pet Shop UI",
 Default = false,
 Callback = function(Value)
 local asv = game:GetService("Players").LocalPlayer.PlayerGui.PetShop_UI
-    if v then
+    if Value then
     asv.Enabled = true
     else
     asv.Enabled = false
@@ -2656,7 +2658,7 @@ Description = "Show Seed Shop UI",
 Default = false,
 Callback = function(Value)
 local asv = game:GetService("Players").LocalPlayer.PlayerGui.Seed_Shop
-    if v then
+    if Value then
     asv.Enabled = true
     else
     asv.Enabled = false
@@ -2670,7 +2672,7 @@ Description = "Show Gear Shop UI",
 Default = false,
 Callback = function(Value)
 local asv = game:GetService("Players").LocalPlayer.PlayerGui.Gear_Shop
-    if v then
+    if Value then
     asv.Enabled = true
     else
     asv.Enabled = false
@@ -2684,7 +2686,7 @@ Description = "Show Daily Quest UI",
 Default = false,
 Callback = function(Value)
 local asv = game:GetService("Players").LocalPlayer.PlayerGui.DailyQuests_UI
-    if v then
+    if Value then
     asv.Enabled = true
     else
     asv.Enabled = false
@@ -2698,7 +2700,7 @@ Description = "Show Upgrade Pet Slot UI",
 Default = false,
 Callback = function(Value)
 local asv = game:GetService("Players").LocalPlayer.PlayerGui.PetEquipSlots_UI
-    if v then
+    if Value then
     asv.Enabled = true
     else
     asv.Enabled = false
@@ -2712,7 +2714,7 @@ Description = "Show Cosmetic Shop UI",
 Default = false,
 Callback = function(Value)
 local asv = game:GetService("Players").LocalPlayer.PlayerGui.CosmeticShop_UI
-    if v then
+    if Value then
     asv.Enabled = true
     else
     asv.Enabled = false
