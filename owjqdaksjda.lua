@@ -1,6 +1,6 @@
 
 
-
+--V1
 local Data = {}
 Data.ReplicatedStorage = game:GetService("ReplicatedStorage")
 Data.Players = game:GetService("Players")
@@ -116,7 +116,7 @@ Data.PackList = { "Ancient Seed Pack", "Basic Seed Pack", "Corrupted Zen Seed Pa
 
 
 -- Load Library
-local Library, SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/jamalarap61/Mslspakwnendlsowjnssoaknana/refs/heads/main/wnsoaowknswlwksnwmk.lua"))()
+local Library, SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/jamalarap61/Mslspakwnendlsowjnssoaknana/main/wnsoaowknswlwksnwmk.lua"))()
 
 function MainMenu() 
 function gradient(text, startColor, endColor)
@@ -193,7 +193,7 @@ local Tab9 = Window:AddTab({
     Icon = "signal"
 })
 local Tab10 = Window:AddTab({
-    Title = "Other",
+    Title = "Server",
     Icon = "align-justify"
 })
 local Tab11 = Window:AddTab({
@@ -1093,7 +1093,7 @@ Callback = function(Value)
     1
 )
 task.wait(2)
-        Data.RemoteCraft:FireServer("SetRecipe", ECWB, "GearEventWorkbench", "Reclaimer")
+        Data.RemoteCraft:FireServer("SetRecipe", Data.ECWB, "GearEventWorkbench", "Reclaimer")
         task.wait(2)
         Data.RemoteCraft:FireServer(
     "InputItem",
@@ -1245,7 +1245,7 @@ Callback = function(Value)
                         end
                     end
 
-                    task.wait(DelayLp) -- delay antar loop utama
+                    task.wait(DelayLP) -- delay antar loop utama
                 end
             end)
             else
@@ -1278,8 +1278,8 @@ ForceLp = Value
     while ForceLp do
     Tsdj:SetValue(false)
     task.wait(1)
-    Tsdj:SetValur(true)
-    task.wait(DelayLp)
+    Tsdj:SetValue(true)
+    task.wait(DelayLP)
     end
     end) 
     else 
@@ -1518,6 +1518,28 @@ BFIS:SetDesc("Player: "..Data.BestPall.."\nName: "..Data.NameAll.."\nWeight: "..
 end
 })
 
+local Farm11 = Tab3:AddSection("Infinity Jump")
+local infinityJumpEnabled = false
+Data.UIS.JumpRequest:Connect(function()
+    if infinityJumpEnabled and Data.LocalPlayer.Character and Data.LocalPlayer.Character:FindFirstChild("Humanoid") then
+        Data.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
+
+Farm11:AddToggle("INFJUMP",{
+Title = "Infinity Jump",
+Description = "Enable/Disable",
+Default = false,
+Callback = function(Value)
+if Value then
+infinityJumpEnabled = true
+else
+infinityJumpEnabled = false
+end
+end
+})
+
+
 local Pet1 = Tab4:AddSection("Auto Feed Pet")
 local ssddf = Pet1:AddDropdown("SAFP", {
 Title = "Select: Pet Target",
@@ -1618,7 +1640,7 @@ Callback = function(Value)
 AutoFeedEnabled = Value
         if AutoFeedEnabled then
         if not DelayFeed then
-        NotifuHub("Please Set Delay Auto Feed") 
+        NotifyHub("Please Set Delay Auto Feed") 
         return
         end
             task.spawn(function()
@@ -1712,7 +1734,7 @@ local function FindMatchingTool()
     local function isMatch(name)
         local baseName = name:match("^(.-) x") or name
         baseName = baseName:lower():gsub("%s+", "")
-        for _, eggName in ipairs(SelectedHatchPet) do
+        for _, eggName in ipairs(Data.SelectedHatchPet) do
             local target = tostring(eggName):lower():gsub("%s+", "")
             if baseName == target then
                 return true
@@ -1739,7 +1761,7 @@ local function FindMatchingTool()
     return nil
 end
 
-Pet2:AddDropdown("SEGGH", {
+Pet2:AddDropdown("SHEGG", {
 Title = "Select: Egg",
 Description = "Target",
 Values = Data.EggList, 
@@ -1768,7 +1790,7 @@ Default = false,
 Callback = function(Value)
         AutoPlcEgg = Value
         if Value then
-            if not SelectedHatchPet or typeof(SelectedHatchPet) ~= "table" or #SelectedHatchPet == 0 then
+            if not Data.SelectedHatchPet or typeof(Data.SelectedHatchPet) ~= "table" or #Data.SelectedHatchPet == 0 then
                 NotifyHub("Please Select egg to Auto Place")
                 return
             end
@@ -1818,7 +1840,7 @@ Callback = function(Value)
                 local Object = Ladangs:WaitForChild("Important"):WaitForChild("Objects_Physical")
                     for _, desc in ipairs(Object:GetDescendants()) do
                         if desc:IsA("ProximityPrompt") and desc.Enabled and string.find(desc.ActionText, "Hatch") then
-                            for _, eggName in ipairs(SelectedHatchPet) do
+                            for _, eggName in ipairs(Data.SelectedHatchPet) do
                                 if string.find(tostring(desc.Parent), eggName) then
                                     local part = desc.Parent
                                     if part then
@@ -2065,8 +2087,1415 @@ AutoBoostPet = false
 end
 })
 
+local Shp1 = Tab5:AddSection("Zen Event Shop")
+Shp1:AddDropdown("SZSHP", {
+Title = "Select: Zen Shop",
+Description = "Target Item",
+Values = Data.ZenShop, 
+Multi = true, 
+AllowNull = true, 
+Callback = function(Value)
+if type(Value) == "table" then
+            Data.SelectedEvent = Value
+        else
+            Data.SelectedEvent = {Value}
+        end
+end
+})
+
+local AutoBHon = false 
+Shp1:AddToggle("ABESSI",{
+Title = "Auto Buy Event Shop",
+Description = "Selected Item",
+Default = false,
+Callback = function(Value)
+AutoBHon = Value        
+        if Value then
+        local soundService = game:GetService("SoundService").Notification
+        local notifFrame = game:GetService("Players").LocalPlayer.PlayerGui.Top_Notification.Frame
+        if not Data.SelectedEvent then
+            NotifyHub("Please Select Zen item")
+            return
+        end
+            notifFrame.Visible = false
+            soundService.Volume = 0
+            task.spawn(function()
+                while AutoBHon do
+                    for _, item in pairs(Data.SelectedEvent) do
+                        BuyEvent1(item)
+                        task.wait(0.1)
+                    end
+                    task.wait(math.random(1, 2))
+                end
+            end)
+        else
+        AutoBHon = false
+        local soundService = game:GetService("SoundService").Notification
+        local notifFrame = game:GetService("Players").LocalPlayer.PlayerGui.Top_Notification.Frame
+            notifFrame.Visible = true
+            soundService.Volume = 0.5
+        end
+end
+})
+
+local Shp2 = Tab5:AddSection("Seed Shop")
+Shp2:AddDropdown("SSSHP", {
+Title = "Select: Seed Shop",
+Description = "Target Seed",
+Values = Data.SeedList, 
+Multi = true, 
+AllowNull = true, 
+Callback = function(Value)
+if type(Value) == "table" then
+            Data.SelectedSeed = Value
+        else
+            Data.SelectedSeed = {Value}
+        end
+end
+})
+
+local SeedAuto = false
+Shp2:AddToggle("ABSSS",{
+Title = "Auto Buy Seed",
+Description = "Selected Seed",
+Default = false,
+Callback = function(Value)
+SeedAuto = Value
+if Value then
+    if not Data.SelectedSeed or #Data.SelectedSeed == 0 then
+        NotifyHub("Please Select Seed to Auto Buy")
+        return
+    end
+    task.spawn(function()
+    while SeedAuto do
+    for i = 1,10 do
+    for _, item in pairs(Data.SelectedSeed) do
+    BuySeed(item)
+    task.wait() 
+    end
+    task.wait() 
+    end
+    task.wait(math.random(3, 5))
+    end
+    end) 
+else
+    SeedAuto = false
+end
+end
+})
 
 
+local Shp3 = Tab5:AddSection("Gear Shop")
+Shp3:AddDropdown("SGSHP", {
+Title = "Select: Gear Shop",
+Description = "Target Gear",
+Values = Data.GearList, 
+Multi = true, 
+AllowNull = true, 
+Callback = function(Value)
+if type(Value) == "table" then
+            Data.SelectedGear = Value
+        else
+            Data.SelectedGear = {Value}
+        end
+end
+})
+
+local GearAuto = false
+Shp3:AddToggle("ABGSG",{
+Title = "Auto Buy Gear",
+Description = "Selected Gear",
+Default = false,
+Callback = function(Value)
+GearAuto = Value
+if Value then
+    if not Data.SelectedGear or #Data.SelectedGear == 0 then
+        NotifyHub("Please Select Gear to Auto Buy")
+        return
+    end
+    task.spawn(function()
+    while GearAuto do
+    for i = 1,10 do
+    for _, item in pairs(Data.SelectedGear) do
+    BuyGear(item)
+    task.wait() 
+    end
+    task.wait() 
+    end
+    task.wait(math.random(3, 5))
+    end
+    end) 
+else
+    GearAuto = false
+end
+end
+})
+
+local Shp4 = Tab5:AddSection("Gear Shop")
+Shp4:AddDropdown("SGSHP", {
+Title = "Select: Egg Shop",
+Description = "Target Egg",
+Values = Data.EggList, 
+Multi = true, 
+AllowNull = true, 
+Callback = function(Value)
+if type(Value) == "table" then
+            Data.SelectedEgg = Value
+        else
+            Data.SelectedEgg = {Value}
+        end
+end
+})
+
+local EggAuto = false
+Shp4:AddToggle("ABEGGSG",{
+Title = "Auto Buy Egg",
+Description = "Selected Egg",
+Default = false,
+Callback = function(Value)
+    EggAuto = Value
+if Value then
+    if not Data.SelectedEgg or #Data.SelectedEgg == 0 then
+        NotifyHub("Please Select Egg to Auto Buy")
+        return
+    end
+    task.spawn(function()
+            while EggAuto do
+            for jg = 1, 5 do
+               for _, v in pairs(Data.SelectedEgg) do
+               Data.GameEvents.BuyPetEgg:FireServer(v)
+               end
+               task.wait()
+               end
+               task.wait(math.random(1, 5)) 
+               end
+        end)
+    else 
+    EggAuto = false
+    end
+end
+end
+})
+
+local Esp1 = Tab6:AddSection("ESP Pet Snip")
+Esp1:AddToggle("ESPPET",{
+Title = "Pet Snip",
+Description = "Check Pet Name Inside Ready Hatch Egg",
+Default = false,
+Callback = function(Value)
+if Value then
+    EspBool = true
+    task.wait(0.5)
+    checkPet()
+    else
+    EspBool = false
+    task.wait(0.5)
+    checkPet()
+    end
+end
+})
+
+
+local petAddedConnection = nil 
+local Esp2 = Tab6:AddSection("Cooldown Pet ESP")
+Esp2:AddToggle("ESPCDPT",{
+Title = "Enable ESP",
+Description = "Cooldown Pet ESP",
+Default = false,
+Callback = function(Value)
+if Value then
+            getgenv().PetESP = true
+
+            local Players = game:GetService("Players")
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local lp = Players.LocalPlayer
+
+            local PetUI = lp:WaitForChild("PlayerGui"):WaitForChild("ActivePetUI")
+            local GetCooldown = ReplicatedStorage.GameEvents:WaitForChild("GetPetCooldown")
+            local PetsPhysical = workspace:WaitForChild("PetsPhysical")
+
+            local ESPFolder = Instance.new("Folder", game.CoreGui)
+            ESPFolder.Name = "PetESP"
+
+            local CooldownMap = {}
+            local ESPMap = {}
+
+            local function GetAllUUIDs()
+                local UUIDs = {}
+                for _, v in ipairs(PetUI.Frame.Main.PetDisplay.ScrollingFrame:GetChildren()) do
+                    if v:IsA("Frame") and v.Name ~= "PetTemplate" and v:FindFirstChild("PET_TYPE") then
+                        table.insert(UUIDs, v.Name)
+                    end
+                end
+                return UUIDs
+            end
+            local function GetNames()
+                local jawa = nil
+                for _, v in ipairs(PetUI.Frame.Main.PetDisplay.ScrollingFrame:GetChildren()) do
+                    if v:IsA("Frame") and v.Name ~= "PetTemplate" and v:FindFirstChild("PET_TYPE") then
+                        local jawir = v:FindFirstChild("PET_TYPE")
+                        jawa = jawir.Text
+                    end
+                end
+                return jawa
+            end
+
+            local function UpdateCooldownData()
+                CooldownMap = {}
+                local UUIDs = GetAllUUIDs()
+                for _, uuid in ipairs(UUIDs) do
+                    local result = GetCooldown:InvokeServer(uuid)
+                    if result and result[1] then
+                        for key, value in pairs(result[1]) do
+                            if string.find(key, "Time") and type(value) == "number" then
+                                CooldownMap[uuid] = {
+                                    EndTime = os.time() + math.floor(value),
+                                    Expired = false
+                                }
+                            end
+                        end
+                    end
+                end
+            end
+
+            local function CreateESP(part, uuid)
+    local billboard = Instance.new("BillboardGui", ESPFolder)
+    billboard.Name = "ESP_" .. uuid
+    billboard.Adornee = part
+    billboard.AlwaysOnTop = true
+    billboard.Size = UDim2.new(0, 100, 0, 40)
+    billboard.StudsOffset = Vector3.new(0, 2, 0)
+
+    local label = Instance.new("TextLabel", billboard)
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.TextColor3 = Color3.fromRGB(255, 255, 0)
+    label.TextStrokeColor3 = Color3.fromRGB(255, 255, 200)
+    label.TextStrokeTransparency = 0.2
+    label.TextScaled = false
+    label.TextSize = 15
+    label.Font = Enum.Font.GothamBold
+    label.Text = "..."
+
+    return label
+end
+
+
+            local function InitESP()
+                for _, part in ipairs(PetsPhysical:GetChildren()) do
+                    if part:IsA("Part") and not ESPMap[part] then
+                        local uuid = part:GetAttribute("UUID")
+                        if uuid then
+                            local label = CreateESP(part, uuid)
+                            ESPMap[part] = { Label = label, UUID = uuid }
+                        end
+                    end
+                end
+            end
+
+            local function RefreshESP()
+                for part, data in pairs(ESPMap) do
+                    local info = CooldownMap[data.UUID]
+                    if info and type(info) == "table" and info.EndTime then
+                        local remaining = math.max(0, info.EndTime - os.time())
+
+                        if remaining <= 0 and not info.Expired then
+                            info.Expired = true
+                            task.spawn(function()
+                                local result = GetCooldown:InvokeServer(data.UUID)
+                                if result and result[1] then
+                                    for key, val in pairs(result[1]) do
+                                        if string.find(key, "Time") and type(val) == "number" then
+                                            CooldownMap[data.UUID] = {
+                                                EndTime = os.time() + math.floor(val),
+                                                Expired = false
+                                            }
+                                        end
+                                    end
+                                end
+                            end)
+                        end
+
+                        if remaining > 0 then
+                            local mins = math.floor(remaining / 60)
+                            local secs = remaining % 60
+                            data.Label.Text = "[Timer] "..mins .. "m : " .. secs .. "s"
+                        else
+                            data.Label.Text = "Ready"
+                        end
+                    else
+                        data.Label.Text = "Ready"
+                    end
+                end
+            end
+
+            -- Mulai loop realtime ESP
+            task.spawn(function()
+                while getgenv().PetESP do
+                    pcall(UpdateCooldownData)
+                    InitESP()
+                    for i = 1, 300 do
+                        if not getgenv().PetESP then break end
+                        RefreshESP()
+                        task.wait(1)
+                    end
+                end
+            end)
+
+            -- Pasang koneksi ChildAdded → simpan ke variabel global
+            petAddedConnection = PetsPhysical.ChildAdded:Connect(function()
+                task.wait(1)
+                InitESP()
+            end)
+
+        else
+            
+            getgenv().PetESP = false
+
+            -- Hapus folder ESP
+            local folder = game.CoreGui:FindFirstChild("PetESP")
+            if folder then folder:Destroy() end
+
+            -- Putuskan koneksi ChildAdded
+            if petAddedConnection then
+                petAddedConnection:Disconnect()
+                petAddedConnection = nil
+            end
+        end
+    end
+})
+
+local Esp3 = Tab6:AddSection("Fruit ESP")
+Esp3:AddDropdown("FFTF", {
+Title = "Filter: Fruit",
+Description = "Target Fruit",
+Values = Data.FruitList, 
+Multi = true, 
+AllowNull = true, 
+Callback = function(Value)
+Data.SelectedFPlant = type(Value) == "table" and Value or { Value }
+end
+})
+
+Esp3:AddDropdown("FMFTF", {
+Title = "Filter: Mutation Fruit",
+Description = "Target Fruit",
+Values = Data.ListMutation, 
+Multi = true, 
+AllowNull = true, 
+Callback = function(Value)
+Data.SelectedFMuta = type(Value) == "table" and Value or { Value }
+end
+})
+
+Esp3:AddInput("FWKG4",{
+Title = "Filter: Weight",
+Description = "Show Fruit Above This KG",
+Placeholder = "50",
+Numeric = true,
+Finished = true,
+Callback = function(Value)
+Data.MaxFWeight = Value
+end
+})
+
+local fruitAddedConnection = nil
+
+Esp3:AddToggle("EFESPS",{
+Title = "Enable Fruit Esp",
+Description = "Show Selected Fruit Esp",
+Default = false,
+Callback = function(Value)
+ local MyFarm = GetFarm()
+        if not MyFarm then return end
+
+        local MyPlant = MyFarm:FindFirstChild("Important")
+        if not MyPlant then return end
+        MyPlant = MyPlant:FindFirstChild("Plants_Physical")
+        if not MyPlant then return end
+
+        local function CreateFruitESP(obj)
+            if obj:FindFirstChild("FruitESP") then return end
+
+            local weight = obj:FindFirstChild("Weight")
+            if not weight then return end
+
+            local fruitName = obj.Name
+            local value = Calplantvalue(obj)
+            local roundedWeight = math.round(weight.Value)
+
+            if Data.SelectedFPlant and #Data.SelectedFPlant > 0 and not table.find(Data.SelectedFPlant, fruitName) then
+                return
+            end
+
+            if Data.SelectedFMuta and #Data.SelectedFMuta > 0 then
+                local matched = false
+                for _, mut in ipairs(Data.MutationHandler:GetPlantMutations(obj)) do
+                    if table.find(Data.SelectedFMuta, mut.Name) then
+                        matched = true
+                        break
+                    end
+                end
+                if not matched then return end
+            end
+
+            if MaxFWeight and MaxFWeight > 0 and roundedWeight < MaxFWeight then
+                return
+            end
+
+            local esp = Instance.new("BillboardGui")
+            esp.Name = "FruitESP"
+            esp.Size = UDim2.new(0, 80, 0, 30)
+            esp.StudsOffset = Vector3.new(0, 2, 0)
+            esp.AlwaysOnTop = true
+            esp.Adornee = obj
+            esp.Parent = obj
+
+            local label = Instance.new("TextLabel")
+            label.Size = UDim2.new(1, 0, 1, 0)
+            label.BackgroundTransparency = 1
+            label.TextColor3 = Color3.fromRGB(255, 255, 0)
+            label.TextStrokeColor3 = Color3.fromRGB(255, 255, 200)
+            label.TextStrokeTransparency = 0.2
+            label.TextScaled = false
+            label.TextSize = 15
+            label.Font = Enum.Font.GothamBold
+            label.Text = fruitName .. " - " .. roundedWeight .. "KG - $" .. value
+            label.Parent = esp
+        end
+
+        if Value then
+            for _, plant in ipairs(MyPlant:GetChildren()) do
+                local fruitsFolder = plant:FindFirstChild("Fruits")
+                if fruitsFolder then
+                    for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                        CreateFruitESP(fruit)
+                    end
+                end
+            end
+
+            if fruitAddedConnection then fruitAddedConnection:Disconnect() end
+            fruitAddedConnection = MyPlant.ChildAdded:Connect(function(plant)
+                local fruitsFolder = plant:WaitForChild("Fruits", 2)
+                if fruitsFolder then
+                    for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                        CreateFruitESP(fruit)
+                    end
+                    fruitsFolder.ChildAdded:Connect(function(fruit)
+                        task.wait(0.1)
+                        CreateFruitESP(fruit)
+                    end)
+                end
+            end)
+
+        else
+            if fruitAddedConnection then
+                fruitAddedConnection:Disconnect()
+                fruitAddedConnection = nil
+            end
+
+            for _, plant in ipairs(MyPlant:GetChildren()) do
+                local fruitsFolder = plant:FindFirstChild("Fruits")
+                if fruitsFolder then
+                    for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                        local esp = fruit:FindFirstChild("FruitESP")
+                        if esp then esp:Destroy() end
+                    end
+                end
+            end
+        end
+    end
+})
+
+local Dlg1 = Tab6:AddSection("Show Dialog UI")
+Dlg1:AddToggle("SZSUI",{
+Title = "Zen Shop UI",
+Description = "Show Zen Shop UI",
+Default = false,
+Callback = function(Value)
+local asv = game:GetService("Players").LocalPlayer.PlayerGui.EventShop_UI
+    if Value then
+    asv.Enabled = true
+    else
+    asv.Enabled = false
+    end
+end
+})
+
+Dlg1:AddToggle("STMUI",{
+Title = "Traveling Merchant UI",
+Description = "Show Traveling Merchant UI",
+Default = false,
+Callback = function(Value)
+local asv = game:GetService("Players").LocalPlayer.PlayerGui.TravelingMerchantShop_UI
+    if Value then
+    asv.Enabled = true
+    else
+    asv.Enabled = false
+    end
+end
+})
+
+Dlg1:AddToggle("SPTUI",{
+Title = "Pet Shop UI",
+Description = "Show Pet Shop UI",
+Default = false,
+Callback = function(Value)
+local asv = game:GetService("Players").LocalPlayer.PlayerGui.PetShop_UI
+    if Value then
+    asv.Enabled = true
+    else
+    asv.Enabled = false
+    end
+end
+})
+
+Dlg1:AddToggle("SDSUI",{
+Title = "Seed Shop UI",
+Description = "Show Seed Shop UI",
+Default = false,
+Callback = function(Value)
+local asv = game:GetService("Players").LocalPlayer.PlayerGui.Seed_Shop
+    if Value then
+    asv.Enabled = true
+    else
+    asv.Enabled = false
+    end
+end
+})
+
+Dlg1:AddToggle("SGRSUI",{
+Title = "Gear Shop UI",
+Description = "Show Gear Shop UI",
+Default = false,
+Callback = function(Value)
+local asv = game:GetService("Players").LocalPlayer.PlayerGui.Gear_Shop
+    if Value then
+    asv.Enabled = true
+    else
+    asv.Enabled = false
+    end
+end
+})
+
+Dlg1:AddToggle("DQUIS",{
+Title = "Daily Quest UI",
+Description = "Show Daily Quest UI",
+Default = false,
+Callback = function(Value)
+local asv = game:GetService("Players").LocalPlayer.PlayerGui.DailyQuests_UI
+    if Value then
+    asv.Enabled = true
+    else
+    asv.Enabled = false
+    end
+end
+})
+
+Dlg1:AddToggle("SUPSUI",{
+Title = "Upgrade Pet Slot UI",
+Description = "Show Upgrade Pet Slot UI",
+Default = false,
+Callback = function(Value)
+local asv = game:GetService("Players").LocalPlayer.PlayerGui.PetEquipSlots_UI
+    if Value then
+    asv.Enabled = true
+    else
+    asv.Enabled = false
+    end
+end
+})
+
+Dlg1:AddToggle("COSMUI",{
+Title = "Cosmetic Shop UI",
+Description = "Show Cosmetic Shop UI",
+Default = false,
+Callback = function(Value)
+local asv = game:GetService("Players").LocalPlayer.PlayerGui.CosmeticShop_UI
+    if Value then
+    asv.Enabled = true
+    else
+    asv.Enabled = false
+    end
+end
+})
+
+local Tp1 = Tab8:AddSection("Teleport Event")
+Tp1:AddButton({
+Title = "Event Teleport", 
+Callback = function()
+Teleport(CFrame.new(-101.005455, 4.000012, -8.197269))
+end
+})
+
+local Tp2 = Tab8:AddSection("Teleport Sell NPC")
+Tp2:AddButton({
+Title = "Sell NPC Teleport", 
+Callback = function()
+Teleport(CFrame.new(86.58, 3.00, 0.43)) 
+end
+})
+
+local Tp3 = Tab8:AddSection("Teleport Seed NPC")
+Tp3:AddButton({
+Title = "Seed NPC Teleport", 
+Callback = function()
+Teleport(CFrame.new(86.59, 3.00, -27.00))
+end
+})
+
+local Tp4 = Tab8:AddSection("Teleport Gear NPC")
+Tp4:AddButton({
+Title = "Gear NPC Teleport", 
+Callback = function()
+Teleport(CFrame.new(-286.93, 3.00, -33.03))
+end
+})
+
+local Tp5 = Tab8:AddSection("Teleport Cosmetic NPC")
+Tp5:AddButton({
+Title = "Cosmetic NPC Teleport", 
+Callback = function()
+Teleport(CFrame.new(-287.01, 3.00, -14.90))
+end
+})
+
+local Tp6 = Tab8:AddSection("Teleport Egg NPC")
+Tp6:AddButton({
+Title = "Egg NPC Teleport", 
+Callback = function()
+Teleport(CFrame.new(-283.60, 3.00, 3.51))
+end
+})
+
+local IdleAbl = false
+local ZenEv = false
+Data.SellMultiX = 1000
+local Vuln1 = Tab7:AddSection("Sell Multiplier (Pet)")
+Vuln1:AddParagraph ({
+    Title = "Sell Multiplier (Pet)", 
+    Content = "1. You Need 2 Account to Held a Pet\n2. Held a Expensive Pet on Account 1\n3. Held a Cheapest Pet on Account 2 (then enable sell multiplier)", 
+}) 
+
+Vuln1:AddSlider("MLTSLL", {
+    Title       = "Multiplier: 1000-5000",
+    Description = "Cheap Pet Multiplier Value",
+    Min         = 1000,      
+    Max         = 5000,  
+    Default     = 1000,
+    Rounding = 0,
+    Callback    = function(Value)
+    Data.SellMultiX = tonumber(Value) 
+    end
+})
+
+Vuln1:AddToggle("ASPMDS",{
+Title = "Auto Sell Pet Multiplier",
+Description = "Dupe Sheckless",
+Default = false,
+Callback = function(Value)
+if Value then
+local Players = game:GetService("Players")
+for j = 1, Data.SellMultiX do
+for _, player in ipairs(Players:GetPlayers()) do
+    local charFolder = workspace:FindFirstChild(player.Name)
+    if charFolder then
+        for _, obj in ipairs(charFolder:GetChildren()) do
+            if obj:IsA("Tool") and string.find(obj.Name, "Age") then
+            Data.SellPetRE:FireServer(obj)
+            end
+        end
+    end
+end
+end
+    end
+end
+})
+
+local Vuln2 = Tab7:AddSection("Auto Middle Pet")
+
+Vuln2:AddParagraph ({
+    Title = "Auto Middle Pet Guide", 
+    Content = "1.Select Your pet Target\n2.Put Pet Cooldown Ex: Mooncat Cd is 1:08m so 68s\n3.Enable Auto Middle Pet", 
+})
+
+local zxcas = Vuln2:AddDropdown("SAMPTP", {
+Title = "Select: Auto Middle Pet",
+Description = "Target Pet (Refresh Pet List)",
+Values = {}, 
+Multi = true, 
+AllowNull = true, 
+Callback = function(Value)
+ Data.SelectedPetMids = {}
+
+        local selectedNames = (typeof(Value) == "table") and Value or {Value}
+        local copy = {}
+        for i, v in ipairs(Data.PetListDataMid) do
+            copy[i] = { Name = v.Name, UUID = v.UUID, used = false }
+        end
+
+        for _, selectedName in ipairs(selectedNames) do
+            for i, pet in ipairs(copy) do
+                if pet.Name == selectedName and not pet.used then
+                    table.insert(Data.SelectedPetMids, {
+                        Name = pet.Name,
+                        UUID = pet.UUID
+                    })
+                    pet.used = true
+                    break
+                end
+            end
+        end
+    end
+})
+
+Vuln2:AddButton({
+Title = "Refresh Pet List", 
+Callback = function()
+local player = game:GetService("Players").LocalPlayer
+        local scroller = player.PlayerGui.ActivePetUI.Frame.Main.PetDisplay.ScrollingFrame
+
+        Data.PetListDataMid = {}
+        Data.petRealMid = {}
+
+        for _, obj in ipairs(scroller:GetChildren()) do
+            if obj:IsA("Frame") and not string.find(obj.Name, "Template") then
+                local main = obj:FindFirstChild("Main")
+                local petNameLabel = main and main:FindFirstChild("PET_TYPE")
+
+                if petNameLabel and petNameLabel:IsA("TextLabel") then
+                    local petName = petNameLabel.Text
+                    local uuid = obj.Name
+
+                    table.insert(Data.PetListDataMid, { Name = petName, UUID = uuid })
+                    table.insert(Data.petRealMid, petName) -- atau petName.." ("..uuid..")" kalau mau tampilkan UUID
+                end
+            end
+        end
+        zxcas:SetValues(Data.petRealMid)
+        zxcas:SetValue({})
+    end
+end
+})
+
+local RemoteVuln = Data.GameEvents.ActivePetService
+local PetCooldowns = 70
+Vuln2:AddInput("IPCD",{
+Title = "Input: Pet Cooldown",
+Description = "Seconds",
+Placeholder = "70",
+Numeric = true,
+Finished = true,
+Callback = function(Value)
+PetCooldowns = Value
+end
+})
+
+local MiddlePet = false
+Vuln2:AddToggle("AMPYPM",{
+Title = "Auto Middle Pet",
+Description = "Make Your Pet in Middle",
+Default = false,
+Callback = function(Value)
+MiddlePet = Value
+    if Value then
+    task.spawn(function()
+    while MiddlePet do
+    CallIdle:Set(true)
+    task.wait(5)
+    CallIdle:Set(false)
+    task.wait(PetCooldowns + 5)
+    end
+    end)
+    else
+    MiddlePet = false
+    end
+end
+})
+
+
+
+Vuln2:AddParagraph ({
+    Title = "Auto Sync Guide", 
+    Content = "Information! This Good For Non Huge Pet like 1:10-1:20m+ Cooldown\n1.Select Your Pet Target Exclude Echo Frog/Triceratops\n2.Put Pet Cooldown Ex: Mooncat Cd is 1:08m give little delay so 1:10-1:20m in second is 60-80\n3.Enable Auto Sync Echo Frog or Triceratops", 
+})
+
+Data.AutoSyncFrog = false
+Vuln2:AddToggle("ASEFM",{
+Title = "Auto Sync Echo Frog",
+Description = "Echo Frog Method",
+Default = false,
+Callback = function(Value)
+Data.AutoSyncFrog = Value
+        if Value then
+        --if Data.AutoSyncTricer then SyncTri:Set(false) continue end
+        CallIdle:Set(true) 
+            task.spawn(function()            
+                while Data.AutoSyncFrog do
+                Data.SyncUuid = nil
+                    for _, pet in ipairs(Data.PetListDataMid) do
+                        if string.find(pet.Name, "Echo Frog") then
+                            Data.SyncUuid = pet.UUID      
+                        break                     
+                        end
+                    end             
+                    if not Data.SyncUuid then
+                        NotifyHub("Echo Frog not found!. Please Refresh Again")
+                        task.wait(2)
+                        continue
+                    end
+                    Data.GetCooldown = game:GetService("ReplicatedStorage").GameEvents:WaitForChild("GetPetCooldown")
+                    local result = Data.GetCooldown:InvokeServer(Data.SyncUuid)
+                    for k, v in pairs(result) do
+                        for e, j in pairs(v) do
+                            if string.find(e, "Time") then
+                                if j == PetCooldowns then
+                                NotifyHub("Synchronization") 
+                                CallIdle:Set(false)
+                                task.wait(PetCooldowns)
+                                NotifyHub("Re-Synchronization")
+                                CallIdle:Set(true) 
+                                task.wait(1) 
+                                end
+                            end
+                        end
+                    end
+                    task.wait(0.01)
+                end
+            end)
+            else
+            Data.AutoSyncFrog = false
+        end
+end
+})
+
+Data.AutoSyncTricer = false
+Vuln2:AddToggle("ASTTM",{
+Title = "Auto Sync Triceratops",
+Description = "Triceratops Method",
+Default = false,
+Callback = function(Value)
+Data.AutoSyncTricer = Value
+        if Value then
+        --if Data.AutoSyncFrog then SyncFrog:Set(false) continue end
+        CallIdle:Set(true) 
+            task.spawn(function()            
+                while Data.AutoSyncTricer do
+                Data.SyncUuids = nil
+                    for _, pet in ipairs(Data.PetListDataMid) do
+                        if string.find(pet.Name, "Triceratops") then
+                            Data.SyncUuids = pet.UUID
+                        break                           
+                        end
+                    end             
+                    if not Data.SyncUuids then
+                        NotifyHub("Triceratops not found!. Please Refresh Again")
+                        task.wait(2)
+                        continue
+                    end
+                    Data.GetCooldown = game:GetService("ReplicatedStorage").GameEvents:WaitForChild("GetPetCooldown")
+                    local result = Data.GetCooldown:InvokeServer(Data.SyncUuids)
+                    for k, v in pairs(result) do
+                        for e, j in pairs(v) do
+                            if string.find(e, "Time") then
+                                if j == PetCooldowns then
+                                NotifyHub("Synchronization") 
+                                CallIdle:Set(false)
+                                task.wait(PetCooldowns)
+                                NotifyHub("Re-Synchronization")
+                                CallIdle:Set(true) 
+                                task.wait(1) 
+                                end
+                            end
+                        end
+                    end
+                    task.wait(0.01)
+                end
+            end)
+            else
+            Data.AutoSyncTricer = false
+        end
+end
+})
+
+CallIdle = Vuln2:AddToggle("PIDTS",{
+Title = "Pet Idle",
+Description = "Dont Touch",
+Default = false,
+Callback = function(Value)
+IdleAbl = Value
+        if Value then
+            task.spawn(function()
+                while IdleAbl do
+                    if Data.SelectedPetMids and type(Data.SelectedPetMids) == "table" then
+                        for _, petData in pairs(Data.SelectedPetMids) do
+                            if petData.UUID then
+                                RemoteVuln:FireServer("SetPetState", petData.UUID, "Idle")
+                                --print("🔄 Set Idle:", petData.Name)
+                            end
+                            task.wait(0.01)
+                        end
+                    end
+                    task.wait(0.01)
+                end
+            end)
+            else
+            IdleAbl = false
+        end
+end
+})
+
+local Perf1 = Tab9:AddSection("Hide Noitification")
+
+Perf1:AddToggle("HDNTF",{
+Title = "Hide Notification",
+Description = "All Notification",
+Default = false,
+Callback = function(Value)
+if Value then
+     local soundService = game:GetService("SoundService").Notification
+        local notifFrame = game:GetService("Players").LocalPlayer.PlayerGui.Top_Notification.Frame
+            notifFrame.Visible = false
+            soundService.Volume = 0
+            else
+            local soundService = game:GetService("SoundService").Notification
+        local notifFrame = game:GetService("Players").LocalPlayer.PlayerGui.Top_Notification.Frame
+            notifFrame.Visible = true
+            soundService.Volume = 0.5
+            end
+end
+})
+
+local Perf2 = Tab9:AddSection("Hide Backpack")
+Perf2:AddToggle("HDBPK",{
+Title = "Hide Backpack",
+Description = "Item Backpack",
+Default = false,
+Callback = function(Value)
+if Value then
+    local agg = game:GetService("Players").LocalPlayer.PlayerGui.BackpackGui
+    agg.Enabled = false
+    else
+    local agg = game:GetService("Players").LocalPlayer.PlayerGui.BackpackGui
+    agg.Enabled = true
+    end
+end
+})
+
+local FPSBooster do
+    local Players = game:GetService("Players")
+    local RunService = game:GetService("RunService")
+    local Lighting = game:GetService("Lighting")
+    local Terrain = workspace:FindFirstChildOfClass("Terrain")
+
+    local booster = {
+        Enabled = false,
+        Aggressive = false,  -- boleh kamu ubah runtime
+        FPSCap = 60,         -- dipakai kalau setfpscap tersedia
+        Connections = {},
+        Saved = {
+            Lighting = {},
+            Terrain = {},
+            Effects = {},   -- post-processing Lighting
+            Inst = {},      -- per-instance props
+        }
+    }
+
+    local EffectClasses = {
+        BloomEffect = true,
+        SunRaysEffect = true,
+        DepthOfFieldEffect = true,
+        BlurEffect = true,
+        ColorCorrectionEffect = true,
+    }
+
+    local function saveOnce(map, inst, kv)
+        if map[inst] then return end
+        local copy = {}
+        for k, v in pairs(kv) do copy[k] = v end
+        map[inst] = copy
+    end
+
+    local function safeSet(inst, prop, value)
+        pcall(function() inst[prop] = value end)
+    end
+
+    local function treatInstance(inst)
+        if not booster.Enabled then return end
+        local class = inst.ClassName
+
+        if class == "ParticleEmitter" or class == "Trail" or class == "Beam" then
+            saveOnce(booster.Saved.Inst, inst, {
+                Enabled = (inst.Enabled ~= nil and inst.Enabled) or false,
+                Rate = (inst.ClassName == "ParticleEmitter" and inst.Rate) or nil
+            })
+            safeSet(inst, "Enabled", false)
+            if inst.ClassName == "ParticleEmitter" and inst.Rate ~= nil then
+                safeSet(inst, "Rate", 0)
+            end
+            return
+        end
+
+        if inst:IsA("BasePart") and inst.CastShadow ~= nil then
+            saveOnce(booster.Saved.Inst, inst, { CastShadow = inst.CastShadow })
+            safeSet(inst, "CastShadow", false)
+        end
+
+        if class == "MeshPart" and inst.RenderFidelity ~= nil then
+            saveOnce(booster.Saved.Inst, inst, { RenderFidelity = inst.RenderFidelity })
+            safeSet(inst, "RenderFidelity", Enum.RenderFidelity.Performance)
+        end
+    end
+
+    local function applyLightingLow()
+        local L = booster.Saved.Lighting
+        if not L._saved then
+            L._saved = true
+            L.GlobalShadows = Lighting.GlobalShadows
+            L.EnvironmentDiffuseScale = Lighting.EnvironmentDiffuseScale
+            L.EnvironmentSpecularScale = Lighting.EnvironmentSpecularScale
+            L.Brightness = Lighting.Brightness
+            L.ShadowSoftness = Lighting.ShadowSoftness
+            L.Ambient = Lighting.Ambient
+            L.OutdoorAmbient = Lighting.OutdoorAmbient
+            for _, v in ipairs(Lighting:GetChildren()) do
+                if EffectClasses[v.ClassName] and v:IsA("PostEffect") then
+                    saveOnce(booster.Saved.Effects, v, { Enabled = v.Enabled })
+                end
+            end
+        end
+        safeSet(Lighting, "GlobalShadows", false)
+        safeSet(Lighting, "EnvironmentDiffuseScale", 0)
+        safeSet(Lighting, "EnvironmentSpecularScale", 0)
+        safeSet(Lighting, "Brightness", 1)
+        safeSet(Lighting, "ShadowSoftness", 0)
+        safeSet(Lighting, "Ambient", Color3.new())
+        safeSet(Lighting, "OutdoorAmbient", Color3.new())
+        for inst, _ in pairs(booster.Saved.Effects) do
+            if inst and inst.Parent then safeSet(inst, "Enabled", false) end
+        end
+    end
+
+    local function applyTerrainLow()
+        if not Terrain then return end
+        local T = booster.Saved.Terrain
+        if not T._saved then
+            T._saved = true
+            T.Decoration = Terrain.Decoration
+            T.WaterWaveSize = Terrain.WaterWaveSize
+            T.WaterWaveSpeed = Terrain.WaterWaveSpeed
+            T.WaterTransparency = Terrain.WaterTransparency
+            T.WaterReflectance = Terrain.WaterReflectance
+        end
+        safeSet(Terrain, "Decoration", false)
+        safeSet(Terrain, "WaterWaveSize", 0)
+        safeSet(Terrain, "WaterWaveSpeed", 0)
+        safeSet(Terrain, "WaterTransparency", 1)
+        safeSet(Terrain, "WaterReflectance", 0)
+    end
+
+    local function applyQualityCap()
+        pcall(function()
+            settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+        end)
+        if typeof(setfpscap) == "function" then
+            pcall(setfpscap, booster.FPSCap)
+        end
+    end
+
+    local function scanWorldChunked()
+        local list = workspace:GetDescendants()
+        local i, n, step = 1, #list, 300
+        while booster.Enabled and i <= n do
+            local j = math.min(i + step - 1, n)
+            for k = i, j do
+                local inst = list[k]
+                treatInstance(inst)
+            end
+            i = j + 1
+            RunService.Heartbeat:Wait()
+        end
+    end
+
+    local function startHooks()
+        table.insert(booster.Connections, workspace.DescendantAdded:Connect(function(inst)
+            task.defer(function()
+                if booster.Enabled then treatInstance(inst) end
+            end)
+        end))
+        table.insert(booster.Connections, RunService.Stepped:Connect(function()
+            if not booster.Enabled then return end
+            for inst, _ in pairs(booster.Saved.Effects) do
+                if inst and inst.Parent and inst.Enabled ~= false then
+                    safeSet(inst, "Enabled", false)
+                end
+            end
+        end))
+    end
+
+    local function stopHooks()
+        for _, c in ipairs(booster.Connections) do
+            pcall(function() c:Disconnect() end)
+        end
+        table.clear(booster.Connections)
+    end
+
+    local function restoreAll()
+        local L = booster.Saved.Lighting
+        if L._saved then
+            safeSet(Lighting, "GlobalShadows", L.GlobalShadows)
+            safeSet(Lighting, "EnvironmentDiffuseScale", L.EnvironmentDiffuseScale)
+            safeSet(Lighting, "EnvironmentSpecularScale", L.EnvironmentSpecularScale)
+            safeSet(Lighting, "Brightness", L.Brightness)
+            safeSet(Lighting, "ShadowSoftness", L.ShadowSoftness)
+            safeSet(Lighting, "Ambient", L.Ambient)
+            safeSet(Lighting, "OutdoorAmbient", L.OutdoorAmbient)
+        end
+        for inst, saved in pairs(booster.Saved.Effects) do
+            if inst and inst.Parent and saved.Enabled ~= nil then
+                safeSet(inst, "Enabled", saved.Enabled)
+            end
+        end
+        local T = booster.Saved.Terrain
+        if Terrain and T._saved then
+            safeSet(Terrain, "Decoration", T.Decoration)
+            safeSet(Terrain, "WaterWaveSize", T.WaterWaveSize)
+            safeSet(Terrain, "WaterWaveSpeed", T.WaterWaveSpeed)
+            safeSet(Terrain, "WaterTransparency", T.WaterTransparency)
+            safeSet(Terrain, "WaterReflectance", T.WaterReflectance)
+        end
+        for inst, saved in pairs(booster.Saved.Inst) do
+            if inst and inst.Parent then
+                for k, v in pairs(saved) do
+                    safeSet(inst, k, v)
+                end
+            end
+        end
+    end
+
+    function booster:On()
+        if self.Enabled then return end
+        self.Enabled = true
+        applyLightingLow()
+        applyTerrainLow()
+        applyQualityCap()
+        startHooks()
+        task.spawn(scanWorldChunked)
+        print("[FPSBooster] ON")
+    end
+
+    function booster:Off()
+        if not self.Enabled then return end
+        self.Enabled = false
+        stopHooks()
+        restoreAll()
+        print("[FPSBooster] OFF")
+    end
+
+    function booster:Set(state)
+        if state then self:On() else self:Off() end
+    end
+
+    FPSBooster = booster
+end
+
+local Perf3 = Tab9:AddSection("FPS Booster")
+
+Perf3:AddToggle("FPSBST", {
+    Title = "FPS Booster",
+    Description = "Smooth FPS",
+    Default = false,
+    Callback = function(Value)
+        if Value then
+            FPSBooster:Set(true)
+            NotifyHub("FPS Booster Enabled")
+        else
+            FPSBooster:Set(false)
+            NotifyHub("FPS Booster Disabled")
+        end
+    end
+})
+
+local Perf4 = Tab9:AddSection("Set FPS Cap")
+local spfpsl = 60
+Perf4:AddSlider("SFPSD", {
+    Title       = "Set FPS Cap",
+    Description = "Increase FPS",
+    Min         = 0,      
+    Max         = 240,  
+    Default     = 60
+    Rounding = 1,
+    Callback    = function(Value)
+ spfpsl = tonumber(Value)
+ setfpscap(spfpsl)
+    end
+})
+
+local afkConnection
+local Perf5 = Tab9:AddSection("Anti-AFK")
+Perf5:AddToggle("ANTAFKW",{
+Title = "ANTI-AFK",
+Description = "Prevent Kick from Game",
+Default = true,
+Callback = function(Value)
+if Value then
+            afkConnection = Data.LocalPlayer.Idled:Connect(function()
+                Data.VirtualUser:CaptureController()
+                Data.VirtualUser:ClickButton2(Vector2.new())
+            end)
+        else
+            if afkConnection then
+                afkConnection:Disconnect()
+                afkConnection = nil
+            end
+end
+})
+
+local Serv1 = Tab10:AddSection("Server Information")
+local SerVes = game:GetService("CoreGui").RobloxGui.SettingsClippingShield.SettingsShield.VersionContainer.PlaceVersionLabel
+local versNum = tonumber(SerVes.Text:match("%d+"))
+Serv1:AddParagraph ({
+    Title = "Place Version", 
+    Content = versNum, 
+}) 
+
+local Serv2 = Tab10:AddSection("Teleport Job ID")
+local PutJob = nil 
+Serv2:AddInput("TPJBID",{
+Title = "Input: Job ID",
+Description = "Server Job ID",
+Placeholder = "Here",
+Numeric = false,
+Finished = true,
+Callback = function(Value)
+PutJob = Value
+end
+})
+
+Serv2:AddButton({
+Title = "Teleport Job ID", 
+Callback = function()
+if not PutJob then
+NotifyHub("Please Input Job Id!")
+return
+end
+game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, PutJob)
+end
+})
+
+Serv2:AddButton({
+Title = "Copy Job ID", 
+Callback = function()
+setclipboard(game.JobId)
+NotifyHub("Copied Job Id")
+end
+})
+
+local Serv3 = Tab10:AddSection("Auto Hop Server")
+local PVersion = nil
+Serv3:AddInput("TPJBID",{
+Title = "Input: Target Place Version",
+Description = "Target Hop Place Version",
+Placeholder = "0",
+Numeric = true,
+Finished = true,
+Callback = function(Value)
+PVersion = tonumber(Value)
+end
+})
+
+local SPDHP = 3
+Serv3:AddInput("TPJBID",{
+Title = "Input: Delay Auto Hop",
+Description = "Speed Auto Hop",
+Placeholder = "3",
+Numeric = true,
+Finished = true,
+Callback = function(Value)
+SPDHP = tonumber(Value)
+end
+})
+
+local HoopPlace = false
+Serv3:AddToggle("AHPSFPV",{
+Title = "Auto Hop Server",
+Description = "until Find Place Version",
+Default = false,
+Callback = function(Value)
+if Value then 
+    if not PVersion then
+    NotifyHub("Please Set Place Version") 
+    return
+    end
+HoopPlace = Value
+task.spawn(function()
+while HoopPlace do
+local SerV = game:GetService("CoreGui").RobloxGui.SettingsClippingShield.SettingsShield.VersionContainer.PlaceVersionLabel
+local Vers = tonumber(SerVes.Text:match("%d+"))
+local abj = tostring(Vers)
+if abj > PVersion then
+NotifyHub("Search "..PVersion.. " Place Version...")
+task.wait(5)
+JoinRand()
+else
+HoopPlace = false
+NotifyHub("Place Version "..PVersion.. " Found!") 
+end
+task.wait(1)
+end
+end)
+else
+HoopPlace = false
+end
+end
+})
+
+local Serv4 = Tab10:AddSection("Auto Reconnect")
+local CoreGui = game:GetService("CoreGui")
+local AutoRejoinLoop = false
+local ErrorConn = nil
+
+local function RejoinLoop()
+	while AutoRejoinLoop do
+		Data.TeleportService:Teleport(game.PlaceId)
+		task.wait(2)
+	end
+end
+
+local function EnableAutoRejoin()
+	task.spawn(function()
+		repeat task.wait() until CoreGui:FindFirstChild("RobloxPromptGui")
+		local promptOverlay = CoreGui:WaitForChild("RobloxPromptGui"):WaitForChild("promptOverlay", 10)
+		if promptOverlay then
+			ErrorConn = promptOverlay.ChildAdded:Connect(function(obj)
+				if obj.Name == "ErrorPrompt" and AutoRejoinLoop then
+					RejoinLoop()
+				end
+			end)
+		end
+	end)
+end
+
+local function DisableAutoRejoin()
+	AutoRejoinLoop = false
+	if ErrorConn then
+		ErrorConn:Disconnect()
+		ErrorConn = nil
+	end
+end
+
+Serv4:AddToggle("ATRCNT",{
+Title = "Auto Reconnect",
+Description = "When Disconnected",
+Default = true,
+Callback = function(Value)
+        if Value then
+            EnableAutoRejoin()
+        else
+            DisableAutoRejoin()
+        end
+end
+})
 
 
 SaveManager:SetLibrary(Library)
@@ -2089,4 +3518,4 @@ end
 local StartLoad = tick() 
 MainMenu()
 local EndLoad = tick() - StartLoad
-print(("Script Loaded in %.2f seconds"):format(EndLoad))
+print(("[LimitHub] Script Loaded in %.2f seconds"):format(EndLoad))
