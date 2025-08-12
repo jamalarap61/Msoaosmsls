@@ -1,7 +1,4 @@
---oldV3
-
-
-
+--oldV5
 
 
 local Data = {}
@@ -2074,6 +2071,7 @@ Shp1:AddDropdown("SZSHP", {
 Title = "Select: Zen Shop",
 Description = "Target Item",
 Values = Data.ZenShop, 
+Value = {},
 Multi = true, 
 AllowNull = true, 
 Callback = function(Value)
@@ -2125,6 +2123,7 @@ Shp2:AddDropdown("SSSHP", {
 Title = "Select: Seed Shop",
 Description = "Target Seed",
 Values = Data.SeedList, 
+Value = {},
 Multi = true, 
 AllowNull = true, 
 Callback = function(Value)
@@ -2172,6 +2171,7 @@ Shp3:AddDropdown("SGSHP", {
 Title = "Select: Gear Shop",
 Description = "Target Gear",
 Values = Data.GearList, 
+Value = {},
 Multi = true, 
 AllowNull = true, 
 Callback = function(Value)
@@ -2218,6 +2218,7 @@ Shp5:AddDropdown("SGSHPDF", {
 Title = "Select: Egg Shop",
 Description = "Target Egg",
 Values = Data.EggList, 
+Value = {},
 Multi = true, 
 AllowNull = true, 
 Callback = function(Value)
