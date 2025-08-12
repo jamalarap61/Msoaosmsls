@@ -1,6 +1,9 @@
+--v7
 
 
---V1
+
+
+
 local Data = {}
 Data.ReplicatedStorage = game:GetService("ReplicatedStorage")
 Data.Players = game:GetService("Players")
@@ -3316,20 +3319,7 @@ Perf3:AddToggle("FPSBST", {
     end
 })
 
-local Perf4 = Tab9:AddSection("Set FPS Cap")
-local spfpsl = 60
-Perf4:AddSlider("SFPSD", {
-    Title       = "Set FPS Cap",
-    Description = "Increase FPS",
-    Min         = 0,      
-    Max         = 240,  
-    Default     = 60
-    Rounding = 1,
-    Callback    = function(Value)
- spfpsl = tonumber(Value)
- setfpscap(spfpsl)
-    end
-})
+
 
 local afkConnection
 local Perf5 = Tab9:AddSection("Anti-AFK")
