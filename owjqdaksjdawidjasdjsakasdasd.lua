@@ -1,4 +1,4 @@
---V1
+--V2
 
 
 
@@ -2299,7 +2299,7 @@ end
 
 local petAddedConnection = nil 
 local Esp2 = Tab6:AddSection("Cooldown Pet ESP")
-Esp2:AddToggle("ASHF",{
+Esp2:AddToggle("ESPCDPT",{
 Title = "Enable ESP",
 Description = "Cooldown Pet ESP",
 Default = false,
@@ -3485,7 +3485,7 @@ local function DisableAutoRejoin()
 	end
 end
 
-Serv4:AddToggle("ASHF",{
+Serv4:AddToggle("ATRCNT",{
 Title = "Auto Reconnect",
 Description = "When Disconnected",
 Default = true,
