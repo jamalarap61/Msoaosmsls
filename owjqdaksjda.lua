@@ -1,4 +1,4 @@
---OLD V2
+--OLD V3
 
 
 
@@ -2253,6 +2253,24 @@ if Value then
         end)
     else 
     EggAuto = false
+    end
+end
+})
+
+local Esp1 = Tab6:AddSection("ESP Pet Snip")
+Esp1:AddToggle("ESPPET",{
+Title = "Pet Snip",
+Description = "Check Pet Name Inside Ready Hatch Egg",
+Default = false,
+Callback = function(Value)
+if Value then
+    EspBool = true
+    task.wait(0.5)
+    checkPet()
+    else
+    EspBool = false
+    task.wait(0.5)
+    checkPet()
     end
 end
 })
