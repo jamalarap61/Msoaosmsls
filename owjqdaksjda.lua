@@ -1,4 +1,4 @@
---OLD V3
+--OLD v4
 
 
 
@@ -2275,6 +2275,175 @@ if Value then
 end
 })
 
+
+local petAddedConnection = nil 
+local Esp2 = Tab6:AddSection("Cooldown Pet ESP")
+Esp2:AddToggle("ESPCDPT",{
+Title = "Enable ESP",
+Description = "Cooldown Pet ESP",
+Default = false,
+Callback = function(Value)
+if Value then
+            getgenv().PetESP = true
+
+            local Players = game:GetService("Players")
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local lp = Players.LocalPlayer
+
+            local PetUI = lp:WaitForChild("PlayerGui"):WaitForChild("ActivePetUI")
+            local GetCooldown = ReplicatedStorage.GameEvents:WaitForChild("GetPetCooldown")
+            local PetsPhysical = workspace:WaitForChild("PetsPhysical")
+
+            local ESPFolder = Instance.new("Folder", game.CoreGui)
+            ESPFolder.Name = "PetESP"
+
+            local CooldownMap = {}
+            local ESPMap = {}
+
+            local function GetAllUUIDs()
+                local UUIDs = {}
+                for _, v in ipairs(PetUI.Frame.Main.PetDisplay.ScrollingFrame:GetChildren()) do
+                    if v:IsA("Frame") and v.Name ~= "PetTemplate" and v:FindFirstChild("PET_TYPE") then
+                        table.insert(UUIDs, v.Name)
+                    end
+                end
+                return UUIDs
+            end
+            local function GetNames()
+                local jawa = nil
+                for _, v in ipairs(PetUI.Frame.Main.PetDisplay.ScrollingFrame:GetChildren()) do
+                    if v:IsA("Frame") and v.Name ~= "PetTemplate" and v:FindFirstChild("PET_TYPE") then
+                        local jawir = v:FindFirstChild("PET_TYPE")
+                        jawa = jawir.Text
+                    end
+                end
+                return jawa
+            end
+
+            local function UpdateCooldownData()
+                CooldownMap = {}
+                local UUIDs = GetAllUUIDs()
+                for _, uuid in ipairs(UUIDs) do
+                    local result = GetCooldown:InvokeServer(uuid)
+                    if result and result[1] then
+                        for key, value in pairs(result[1]) do
+                            if string.find(key, "Time") and type(value) == "number" then
+                                CooldownMap[uuid] = {
+                                    EndTime = os.time() + math.floor(value),
+                                    Expired = false
+                                }
+                            end
+                        end
+                    end
+                end
+            end
+
+            local function CreateESP(part, uuid)
+    local billboard = Instance.new("BillboardGui", ESPFolder)
+    billboard.Name = "ESP_" .. uuid
+    billboard.Adornee = part
+    billboard.AlwaysOnTop = true
+    billboard.Size = UDim2.new(0, 100, 0, 40)
+    billboard.StudsOffset = Vector3.new(0, 2, 0)
+
+    local label = Instance.new("TextLabel", billboard)
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.TextColor3 = Color3.fromRGB(255, 255, 0)
+    label.TextStrokeColor3 = Color3.fromRGB(255, 255, 200)
+    label.TextStrokeTransparency = 0.2
+    label.TextScaled = false
+    label.TextSize = 15
+    label.Font = Enum.Font.GothamBold
+    label.Text = "..."
+
+    return label
+end
+
+
+            local function InitESP()
+                for _, part in ipairs(PetsPhysical:GetChildren()) do
+                    if part:IsA("Part") and not ESPMap[part] then
+                        local uuid = part:GetAttribute("UUID")
+                        if uuid then
+                            local label = CreateESP(part, uuid)
+                            ESPMap[part] = { Label = label, UUID = uuid }
+                        end
+                    end
+                end
+            end
+
+            local function RefreshESP()
+                for part, data in pairs(ESPMap) do
+                    local info = CooldownMap[data.UUID]
+                    if info and type(info) == "table" and info.EndTime then
+                        local remaining = math.max(0, info.EndTime - os.time())
+
+                        if remaining <= 0 and not info.Expired then
+                            info.Expired = true
+                            task.spawn(function()
+                                local result = GetCooldown:InvokeServer(data.UUID)
+                                if result and result[1] then
+                                    for key, val in pairs(result[1]) do
+                                        if string.find(key, "Time") and type(val) == "number" then
+                                            CooldownMap[data.UUID] = {
+                                                EndTime = os.time() + math.floor(val),
+                                                Expired = false
+                                            }
+                                        end
+                                    end
+                                end
+                            end)
+                        end
+
+                        if remaining > 0 then
+                            local mins = math.floor(remaining / 60)
+                            local secs = remaining % 60
+                            data.Label.Text = "[Timer] "..mins .. "m : " .. secs .. "s"
+                        else
+                            data.Label.Text = "Ready"
+                        end
+                    else
+                        data.Label.Text = "Ready"
+                    end
+                end
+            end
+
+            -- Mulai loop realtime ESP
+            task.spawn(function()
+                while getgenv().PetESP do
+                    pcall(UpdateCooldownData)
+                    InitESP()
+                    for i = 1, 300 do
+                        if not getgenv().PetESP then break end
+                        RefreshESP()
+                        task.wait(1)
+                    end
+                end
+            end)
+
+            -- Pasang koneksi ChildAdded → simpan ke variabel global
+            petAddedConnection = PetsPhysical.ChildAdded:Connect(function()
+                task.wait(1)
+                InitESP()
+            end)
+
+        else
+            
+            getgenv().PetESP = false
+
+            -- Hapus folder ESP
+            local folder = game.CoreGui:FindFirstChild("PetESP")
+            if folder then folder:Destroy() end
+
+            -- Putuskan koneksi ChildAdded
+            if petAddedConnection then
+                petAddedConnection:Disconnect()
+                petAddedConnection = nil
+            end
+        end
+    end
+})
 
 SaveManager:SetLibrary(Library)
 
