@@ -1,4 +1,4 @@
---OLD v4
+--OLD v5
 
 
 
@@ -2444,6 +2444,154 @@ end
         end
     end
 })
+
+cal Esp3 = Tab6:AddSection("Fruit ESP")
+Esp3:AddDropdown("FFTF", {
+Title = "Filter: Fruit",
+Description = "Target Fruit",
+Values = Data.FruitList, 
+Multi = true, 
+AllowNull = true, 
+Callback = function(Value)
+Data.SelectedFPlant = type(Value) == "table" and Value or { Value }
+end
+})
+
+Esp3:AddDropdown("FMFTF", {
+Title = "Filter: Mutation Fruit",
+Description = "Target Fruit",
+Values = Data.ListMutation, 
+Multi = true, 
+AllowNull = true, 
+Callback = function(Value)
+Data.SelectedFMuta = type(Value) == "table" and Value or { Value }
+end
+})
+
+Esp3:AddInput("FWKG4",{
+Title = "Filter: Weight",
+Description = "Show Fruit Above This KG",
+Placeholder = "50",
+Numeric = true,
+Finished = true,
+Callback = function(Value)
+Data.MaxFWeight = Value
+end
+})
+
+local fruitAddedConnection = nil
+
+Esp3:AddToggle("EFESPS",{
+Title = "Enable Fruit Esp",
+Description = "Show Selected Fruit Esp",
+Default = false,
+Callback = function(Value)
+ local MyFarm = GetFarm()
+        if not MyFarm then return end
+
+        local MyPlant = MyFarm:FindFirstChild("Important")
+        if not MyPlant then return end
+        MyPlant = MyPlant:FindFirstChild("Plants_Physical")
+        if not MyPlant then return end
+
+        local function CreateFruitESP(obj)
+            if obj:FindFirstChild("FruitESP") then return end
+
+            local weight = obj:FindFirstChild("Weight")
+            if not weight then return end
+
+            local fruitName = obj.Name
+            local value = Calplantvalue(obj)
+            local roundedWeight = math.round(weight.Value)
+
+            if Data.SelectedFPlant and #Data.SelectedFPlant > 0 and not table.find(Data.SelectedFPlant, fruitName) then
+                return
+            end
+
+            if Data.SelectedFMuta and #Data.SelectedFMuta > 0 then
+                local matched = false
+                for _, mut in ipairs(Data.MutationHandler:GetPlantMutations(obj)) do
+                    if table.find(Data.SelectedFMuta, mut.Name) then
+                        matched = true
+                        break
+                    end
+                end
+                if not matched then return end
+            end
+
+            if MaxFWeight and MaxFWeight > 0 and roundedWeight < MaxFWeight then
+                return
+            end
+
+            local esp = Instance.new("BillboardGui")
+            esp.Name = "FruitESP"
+            esp.Size = UDim2.new(0, 80, 0, 30)
+            esp.StudsOffset = Vector3.new(0, 2, 0)
+            esp.AlwaysOnTop = true
+            esp.Adornee = obj
+            esp.Parent = obj
+
+            local label = Instance.new("TextLabel")
+            label.Size = UDim2.new(1, 0, 1, 0)
+            label.BackgroundTransparency = 1
+            label.TextColor3 = Color3.fromRGB(255, 255, 0)
+            label.TextStrokeColor3 = Color3.fromRGB(255, 255, 200)
+            label.TextStrokeTransparency = 0.2
+            label.TextScaled = false
+            label.TextSize = 15
+            label.Font = Enum.Font.GothamBold
+            label.Text = fruitName .. " - " .. roundedWeight .. "KG - $" .. value
+            label.Parent = esp
+        end
+
+        if Value then
+            for _, plant in ipairs(MyPlant:GetChildren()) do
+                local fruitsFolder = plant:FindFirstChild("Fruits")
+                if fruitsFolder then
+                    for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                        CreateFruitESP(fruit)
+                    end
+                end
+            end
+
+            if fruitAddedConnection then fruitAddedConnection:Disconnect() end
+            fruitAddedConnection = MyPlant.ChildAdded:Connect(function(plant)
+                local fruitsFolder = plant:WaitForChild("Fruits", 2)
+                if fruitsFolder then
+                    for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                        CreateFruitESP(fruit)
+                    end
+                    fruitsFolder.ChildAdded:Connect(function(fruit)
+                        task.wait(0.1)
+                        CreateFruitESP(fruit)
+                    end)
+                end
+            end)
+
+        else
+            if fruitAddedConnection then
+                fruitAddedConnection:Disconnect()
+                fruitAddedConnection = nil
+            end
+
+            for _, plant in ipairs(MyPlant:GetChildren()) do
+                local fruitsFolder = plant:FindFirstChild("Fruits")
+                if fruitsFolder then
+                    for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                        local esp = fruit:FindFirstChild("FruitESP")
+                        if esp then esp:Destroy() end
+                    end
+                end
+            end
+        end
+    end
+})
+
+
+
+
+
+
 
 SaveManager:SetLibrary(Library)
 
